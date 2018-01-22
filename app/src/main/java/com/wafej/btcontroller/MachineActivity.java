@@ -24,7 +24,7 @@ public class MachineActivity extends Activity implements View.OnClickListener{
         setContentView(R.layout.activity_machine);
 
         mBtnOpenBT = (Button) findViewById(R.id.btn_open_bt_machine);
-        mBtnVisibleBT = (Button) findViewById(R.id.btn_visible_bt_machine);
+        mBtnVisibleBT = (Button) findViewById(R.id.btn_discover_bt_machine);
         mTVStatus = (TextView) findViewById(R.id.tv_cur_status);
 
         mBtnOpenBT.setOnClickListener(this);
@@ -37,8 +37,8 @@ public class MachineActivity extends Activity implements View.OnClickListener{
             case R.id.btn_open_bt_machine:
                 openBT();
                 break;
-            case R.id.btn_search_bt_controller:
-
+            case R.id.btn_discover_bt_machine:
+                discoverBlueTooth();
                 break;
             default:
                 break;
@@ -59,5 +59,22 @@ public class MachineActivity extends Activity implements View.OnClickListener{
         } else {
             Toast.makeText(MachineActivity.this,R.string.bt_already_enable,Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+    public void discoverBlueTooth() {
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        // can't support bt
+        if (null == adapter) {
+            return;
+        }
+
+        if (adapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+            return;
+        }
+
+        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+        startActivity(intent);
     }
 }

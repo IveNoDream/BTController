@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:text="@string/open_bt"/>
     <Button
-        android:id="@+id/btn_visible_bt_machine"
+        android:id="@+id/btn_discover_bt_machine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/visible_bt"/>
