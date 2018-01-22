@@ -16,6 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".MachineActivity"/>
+        <activity android:name=".ControllerActivity"/>
     </application>
 
 </manifest>

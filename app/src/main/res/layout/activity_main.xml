@@ -8,11 +8,13 @@
     tools:context="com.wafej.btcontroller.MainActivity">
 
     <Button
+        android:id="@+id/btn_controller"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:text="@string/controller"/>
     <Button
+        android:id="@+id/btn_machine"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
