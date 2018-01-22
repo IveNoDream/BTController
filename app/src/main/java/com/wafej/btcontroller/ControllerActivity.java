@@ -9,11 +9,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,7 +37,11 @@ public class ControllerActivity extends Activity implements View.OnClickListener
     private Button mBtnLeft = null;
     private Button mBtnRight = null;
     private TextView mTVStatusBack = null;
-    private Set<BluetoothDevice> nearbyDevices = new HashSet<BluetoothDevice>();
+    private ListView mLVDevices = null;
+    private Set<BluetoothDevice> mNearbyDevices = new HashSet<BluetoothDevice>();
+    private ArrayList<HashMap<String, Object>> mListItem = null;
+    private Set<BluetoothDevice> mPairedDevices = null;
+    private BTDevicesAdapter mAdapter = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +55,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
         mBtnLeft = (Button) findViewById(R.id.btn_left);
         mBtnRight = (Button) findViewById(R.id.btn_right);
         mTVStatusBack = (TextView) findViewById(R.id.tv_status_back_show);
+        mLVDevices = (ListView) findViewById(R.id.lv_bt_devices);
 
         mBtnOpenBT.setOnClickListener(this);
         mBtnSearchBT.setOnClickListener(this);
@@ -134,17 +146,21 @@ public class ControllerActivity extends Activity implements View.OnClickListener
 
             if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
                 Toast.makeText(ControllerActivity.this,
-                        getString(R.string.no_bt_devices).toString(),
+                        getString(R.string.start_search_bt).toString(),
                         Toast.LENGTH_SHORT).show();
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED
                     .equals(action)) {
-                int n = nearbyDevices.size();
+                int n = mNearbyDevices.size();
                 if (n <= 0) {
                     Toast.makeText(ControllerActivity.this,
                             getString(R.string.no_bt_devices).toString(),
-                            Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_SHORT).show();
                     //show waitting progress
                     return;
+                } else {
+                    Toast.makeText(ControllerActivity.this,
+                            getString(R.string.search_finished).toString(),
+                            Toast.LENGTH_LONG).show();
                 }
                 //updateListView();
 
@@ -153,16 +169,106 @@ public class ControllerActivity extends Activity implements View.OnClickListener
                 BluetoothDevice device = intent
                         .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-                if (!nearbyDevices.contains(device)) {
-                    nearbyDevices.add(device);
+                if (!mNearbyDevices.contains(device)) {
+                    mNearbyDevices.add(device);
                     Log.i(TAG,"device name:" + device.getName()+" addr:" + device.getAddress().toString());
+                    updateListView();
                 } else {
                 }
             } else {
                 //faild
             }
         }
-
-
     };
+
+    private void updateListView() {
+        if (null == mAdapter) {
+            mAdapter = new BTDevicesAdapter(this);
+        }
+        mLVDevices.setAdapter(mAdapter);
+    }
+
+    private class BTDevicesAdapter extends BaseAdapter {
+        private LayoutInflater mInflater;
+
+        public BTDevicesAdapter(Context context) {
+            this.mInflater = LayoutInflater.from(context);
+        }
+
+        @Override
+        public int getCount() {
+            return getData().size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+
+            ViewHolder holder = new ViewHolder();
+            if (view == null) {
+                view = mInflater.inflate(R.layout.list_bt_devices, null);
+                holder.text = (TextView) view.findViewById(R.id.tv_bt_info);
+                view.setTag(holder);
+            } else {
+                holder = (ViewHolder) view.getTag();
+            }
+            final String string = getData().get(i)
+                    .get("ItemText" + i).toString();
+            holder.text.setText(string);
+
+            holder.text.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //connect
+                    Log.i(TAG,"onclick");
+                }
+            });
+            return view;
+        }
+
+    }
+
+    public final class ViewHolder {
+        public TextView text;
+    }
+
+    private ArrayList<HashMap<String, Object>> getData() {
+        mListItem = new ArrayList<HashMap<String, Object>>();
+
+        String[] messageNearby = namesFor(mNearbyDevices);
+        for (int i = 0; i < messageNearby.length; i++) {
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            map.put("ItemText" + i, messageNearby[i]);
+            mListItem.add(map);
+        }
+
+        return mListItem;
+    }
+
+    private String[] namesFor(Set<BluetoothDevice> devices) {
+        SparseArray<String> bondStates = new SparseArray<String>();
+        bondStates.put(BluetoothDevice.BOND_NONE, "None");
+        bondStates.put(BluetoothDevice.BOND_BONDING, "Bonding");
+        bondStates.put(BluetoothDevice.BOND_BONDED, "Bonded");
+
+        int n = devices.size();
+        String[] names = new String[n];
+        int i = 0;
+        for (BluetoothDevice device : devices) {
+            int state = device.getBondState();
+            names[i++] = String.format("%d %s %s %s", i, device.getName(),
+                    bondStates.get(state), device.getAddress());
+        }
+
+        return names;
+    }
 }
