@@ -13,4 +13,6 @@
     <string name="visible_bt">蓝牙可见</string>
     <string name="cur_status">当前状态</string>
 
+    <string name="bt_already_enable">蓝牙已经打开</string>
+
 </resources>
