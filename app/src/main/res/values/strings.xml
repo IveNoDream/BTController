@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BTController</string>
+    <string name="controller">遥控器</string>
+    <string name="machine">机器人</string>
+</resources>
