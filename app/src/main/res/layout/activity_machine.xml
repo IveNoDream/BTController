@@ -14,5 +14,27 @@
         android:textAlignment="center"
         android:textSize="20sp"
         android:textColor="@android:color/holo_red_light"/>
+    <Button
+        android:id="@+id/btn_open_bt_machine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/open_bt"/>
+    <Button
+        android:id="@+id/btn_visible_bt_machine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/visible_bt"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cur_status"
+        android:textSize="20sp"/>
+    <TextView
+        android:id="@+id/tv_cur_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:textColor="@android:color/holo_red_light"
+        android:textAlignment="center"/>
 
 </LinearLayout>

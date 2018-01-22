@@ -2,4 +2,15 @@
     <string name="app_name">BTController</string>
     <string name="controller">遥控器</string>
     <string name="machine">机器人</string>
+    <string name="open_bt">开启蓝牙</string>
+    <string name="search_bt">搜索蓝牙</string>
+    <string name="list_bt">蓝牙列表</string>
+    <string name="status_back_show">状态回显:</string>
+    <string name="controller_up">上</string>
+    <string name="controller_down">下</string>
+    <string name="controller_left">左</string>
+    <string name="controller_right">右</string>
+    <string name="visible_bt">蓝牙可见</string>
+    <string name="cur_status">当前状态</string>
+
 </resources>
