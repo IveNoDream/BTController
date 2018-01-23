@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -212,7 +214,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-
+            final int position = i;
             ViewHolder holder = new ViewHolder();
             if (view == null) {
                 view = mInflater.inflate(R.layout.list_bt_devices, null);
@@ -230,12 +232,30 @@ public class ControllerActivity extends Activity implements View.OnClickListener
                 public void onClick(View view) {
                     //connect
                     Log.i(TAG,"onclick");
+                    new BTControllerConnThread(mControllerHandler,(BluetoothDevice)mNearbyDevices.toArray()[position]).start();
                 }
             });
             return view;
         }
 
     }
+
+    private Handler mControllerHandler= new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case BTUtils.MESSAGE_CONNECT_SUCCESS:
+                    Toast.makeText(ControllerActivity.this,"connect success",Toast.LENGTH_SHORT).show();
+                    break;
+                case BTUtils.MESSAGE_CONNECT_ERROR:
+                    Toast.makeText(ControllerActivity.this,"connect failed",Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
 
     public final class ViewHolder {
         public TextView text;
