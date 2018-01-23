@@ -2,6 +2,7 @@ package com.wafej.btcontroller;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,15 +13,19 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Date;
+
 /**
  * Created by wafej on 2018/1/22.
  */
 
 public class MachineActivity extends Activity implements View.OnClickListener{
 
-    Button mBtnOpenBT = null;
-    Button mBtnVisibleBT = null;
-    TextView mTVStatus = null;
+    private Button mBtnOpenBT = null;
+    private Button mBtnVisibleBT = null;
+    private TextView mTVStatus = null;
+    private BTCommunThread mBTCommunThread = null;
+    private static String CUR_STATUS = "NULL";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,13 +95,48 @@ public class MachineActivity extends Activity implements View.OnClickListener{
                 case BTUtils.MESSAGE_CONNECT_SUCCESS:
                     //start commun thread
                     Log.i("ssss","connect_success");
+                    mBTCommunThread = new BTCommunThread(mHandler,(BluetoothSocket) msg.obj);
+                    mBTCommunThread.start();
+
+                    new BackToControllerThread().start();
                     break;
 
                 case BTUtils.MESSAGE_CONNECT_ERROR:
                     //error
                     Log.i("ssss","connect_failed");
                     break;
+                case BTUtils.MESSAGE_READ_OBJECT:
+                    //rev msg from controller
+                    Log.i("ssss","rev_msg: " + msg.obj.toString());
+                    CUR_STATUS = msg.obj.toString();
+                    mTVStatus.setText(CUR_STATUS);
+                    break;
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (null != this.mBTCommunThread) {
+            this.mBTCommunThread.mIsRunning = false;
+        }
+    }
+
+    private class BackToControllerThread extends Thread {
+        @Override
+        public void run() {
+            while (mBTCommunThread.mIsRunning) {
+                mBTCommunThread.writeObject(CUR_STATUS.toString() + "  " + getResources().getString(R.string.update_time)
+                    + new Date(System.currentTimeMillis()));
+                Log.i("ssss","CUR_STATUS: " + CUR_STATUS);
+                try {
+                    sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            super.run();
+        }
+    }
 }

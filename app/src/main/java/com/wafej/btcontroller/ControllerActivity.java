@@ -3,6 +3,7 @@ package com.wafej.btcontroller;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -44,6 +46,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
     private ArrayList<HashMap<String, Object>> mListItem = null;
     private Set<BluetoothDevice> mPairedDevices = null;
     private BTDevicesAdapter mAdapter = null;
+    private BTCommunThread mBTCommunThread = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +96,9 @@ public class ControllerActivity extends Activity implements View.OnClickListener
                 searchNearby();
                 break;
             case R.id.btn_up:
-
+                if (null != mBTCommunThread) {
+                    mBTCommunThread.writeObject(1);
+                }
                 break;
             case R.id.btn_down:
 
@@ -246,9 +251,16 @@ public class ControllerActivity extends Activity implements View.OnClickListener
             switch (msg.what) {
                 case BTUtils.MESSAGE_CONNECT_SUCCESS:
                     Toast.makeText(ControllerActivity.this,"connect success",Toast.LENGTH_SHORT).show();
+                    mBTCommunThread = new BTCommunThread(mControllerHandler,(BluetoothSocket) msg.obj);
+                    mBTCommunThread.start();
                     break;
                 case BTUtils.MESSAGE_CONNECT_ERROR:
                     Toast.makeText(ControllerActivity.this,"connect failed",Toast.LENGTH_SHORT).show();
+                    break;
+                case BTUtils.MESSAGE_READ_OBJECT:
+                    //rev msg
+                    Log.i("ssss","rev_msg: " + msg.obj.toString());
+                    mTVStatusBack.setText(msg.obj.toString());
                     break;
                 default:
                     break;
@@ -290,5 +302,13 @@ public class ControllerActivity extends Activity implements View.OnClickListener
         }
 
         return names;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (null != mBTCommunThread) {
+            mBTCommunThread.mIsRunning = false;
+        }
     }
 }

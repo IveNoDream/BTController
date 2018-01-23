@@ -17,5 +17,6 @@
     <string name="start_search_bt">开始扫描附近蓝牙设备</string>
     <string name="no_bt_devices">未发现蓝牙设备,请确认已开启</string>
     <string name="search_finished">搜索完成</string>
+    <string name="update_time">更新于:</string>
 
 </resources>

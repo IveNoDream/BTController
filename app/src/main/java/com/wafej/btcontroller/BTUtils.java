@@ -13,4 +13,6 @@ public class BTUtils {
     public static final int MESSAGE_CONNECT_SUCCESS = 0x00000001;
 
     public static final int MESSAGE_CONNECT_ERROR = 0x00000002;
+
+    public static final int MESSAGE_READ_OBJECT = 0x00000003;
 }

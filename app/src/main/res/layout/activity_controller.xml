@@ -26,17 +26,19 @@
         android:text="@string/search_bt"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:textSize="30sp"
             android:text="@string/status_back_show"/>
         <TextView
             android:id="@+id/tv_status_back_show"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:textSize="30sp"
             android:textColor="@android:color/holo_blue_light"/>
     </LinearLayout>
     <LinearLayout
