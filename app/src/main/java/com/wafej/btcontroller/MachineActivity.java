@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -109,6 +110,9 @@ public class MachineActivity extends Activity implements View.OnClickListener{
                     //rev msg from controller
                     Log.i("ssss","rev_msg: " + msg.obj.toString());
                     CUR_STATUS = msg.obj.toString();
+                    //update timely
+                    mBTCommunThread.writeObject(CUR_STATUS.toString() + "  " + getResources().getString(R.string.update_time)
+                            + getCurTime());
                     mTVStatus.setText(CUR_STATUS);
                     break;
             }
@@ -128,7 +132,7 @@ public class MachineActivity extends Activity implements View.OnClickListener{
         public void run() {
             while (mBTCommunThread.mIsRunning) {
                 mBTCommunThread.writeObject(CUR_STATUS.toString() + "  " + getResources().getString(R.string.update_time)
-                    + new Date(System.currentTimeMillis()));
+                    + getCurTime());
                 Log.i("ssss","CUR_STATUS: " + CUR_STATUS);
                 try {
                     sleep(3000);
@@ -138,5 +142,10 @@ public class MachineActivity extends Activity implements View.OnClickListener{
             }
             super.run();
         }
+    }
+
+    private String getCurTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        return sdf.format(new Date());
     }
 }

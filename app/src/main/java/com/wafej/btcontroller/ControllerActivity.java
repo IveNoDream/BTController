@@ -67,7 +67,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
         mBtnUp.setOnClickListener(this);
         mBtnDown.setOnClickListener(this);
         mBtnLeft.setOnClickListener(this);
-        mBtnDown.setOnClickListener(this);
+        mBtnRight.setOnClickListener(this);
     }
 
     @Override
@@ -97,17 +97,23 @@ public class ControllerActivity extends Activity implements View.OnClickListener
                 break;
             case R.id.btn_up:
                 if (null != mBTCommunThread) {
-                    mBTCommunThread.writeObject(1);
+                    mBTCommunThread.writeObject("上");
                 }
                 break;
             case R.id.btn_down:
-
+                if (null != mBTCommunThread) {
+                    mBTCommunThread.writeObject("下");
+                }
                 break;
             case R.id.btn_left:
-
+                if (null != mBTCommunThread) {
+                    mBTCommunThread.writeObject("左");
+                }
                 break;
             case R.id.btn_right:
-
+                if (null != mBTCommunThread) {
+                    mBTCommunThread.writeObject("右");
+                }
                 break;
             default:
                 break;
